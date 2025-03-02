@@ -16,9 +16,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5001:5000"
+      - "5002:5000"
     expose:
-      - "5001"
+      - "5002"
     environment:
       - DB_HOST=db
       - REDIS_HOST=redis-server

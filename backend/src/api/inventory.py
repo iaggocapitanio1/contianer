@@ -8,8 +8,6 @@ from fastapi_cache import FastAPICache, default_key_builder
 from fastapi_cache.decorator import cache
 from pydantic import BaseModel
 from tortoise.contrib.fastapi import HTTPNotFoundError
-from fastapi_pagination import Page
-from fastapi_pagination.ext.tortoise import paginate
 # Internal imports
 from src.auth.auth import Auth0User
 from src.controllers import inventory, other_inventory
@@ -17,6 +15,7 @@ from src.crud._types import PAGINATION
 from src.crud.container_inventory_crud import container_inventory_crud
 from src.dependencies import auth
 from src.schemas.container_inventory import ContainerInventoryOut
+from src.schemas.container_invnetory_out import ContainerInventorySimplerOut
 from src.schemas.inventory import CreateOtherInventory, CreateUpdateInventory
 from src.schemas.token import Status
 from urllib.parse import urlencode
@@ -35,14 +34,14 @@ class PageOut(BaseModel):
     count: int
     next: Union[str, None]
     previous: Union[str, None]
-    results: List[ContainerInventoryOut]
+    results: List[ContainerInventorySimplerOut]
 
 
 @router.get(
     "/inventory_by_status",
     response_model=PageOut,
 )
-@cache(namespace="inventory", key_builder=default_key_builder, expire=60 * 10)
+# @cache(namespace="inventory", key_builder=default_key_builder, expire=1)
 async def get_inventory_by_status(
     request: Request,
     status: str,

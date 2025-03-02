@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi_pagination import add_pagination
 from loguru import logger
 
 # Internal imports
@@ -104,7 +103,6 @@ app.add_middleware(
 )
 
 register_tortoise(app, config=TORTOISE_ORM, generate_schemas=False)
-add_pagination(app)  # ✅ Enable fastapi-pagination
 
 app.include_router(users.router)
 app.include_router(notes.router)

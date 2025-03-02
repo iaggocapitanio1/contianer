@@ -11,17 +11,19 @@ from tortoise.queryset import QuerySet
 from src.crud._utils import NOT_FOUND
 from src.crud.tortise_crud_mapper import TortoiseCRUD
 from src.database.models.inventory.container_inventory import ContainerInventory
-from src.schemas.container_inventory import ContainerInventoryIn, ContainerInventoryOut, ContainerInventoryUpdateIn
+from src.schemas.container_inventory import ContainerInventoryIn,  ContainerInventoryUpdateIn
 
 from ._types import PAGINATION
 from loguru import logger
+
+from ..schemas.container_invnetory_out import ContainerInventorySimplerOut
 
 
 class ContainerInventoryCRUD(TortoiseCRUD):
     def __init__(
         self,
     ) -> None:
-        self.schema = ContainerInventoryOut
+        self.schema = ContainerInventorySimplerOut
         self.create_schema = ContainerInventoryIn
         self.update_schema = ContainerInventoryUpdateIn
         self.db_model = ContainerInventory
