@@ -1,13 +1,13 @@
 <template>
   <div>
-    <ul
-      class="flex p-2 m-0 overflow-x-auto list-none select-none bg-0 dark:bg-900"
+    <div
+      class="w-full flex justify-center md:justify-start items-center p-2 m-0 bg-0 dark:bg-900 gap-2"
     >
       <template :key="idx" v-for="(name, idx) in state.componentList">
-        <li class="pr-4">
+        <div class="flex flex-row justify-center gap-4 w-fit-content ">
           <a
             v-ripple
-            class="flex items-center px-6 py-4 p-button p-component"
+            class="flex items-center p-1.5 p-button p-component"
             :class="{
               'p-button-primary': state.active === idx,
               'p-button-secondary': state.active !== idx
@@ -15,17 +15,14 @@
             @click="state.active = idx"
           >
             <span
-              class="text-2xl font-medium p-button-label"
+              class="text-xl font-medium p-2"
               style="color: #f5f9ff"
               >{{ name }}</span
             >
           </a>
-        </li>
-        <li class="flex items-center">
-          <div style="width: 1px; height: 50%" class="border border-r"></div>
-        </li>
+        </div>
       </template>
-    </ul>
+    </div>
     <inventory-table v-if="state.active === 0" class="mt-2"></inventory-table>
     <vendors-table
       v-if="state.active === 1 && $ability.can('read', 'inventory-vendors')"

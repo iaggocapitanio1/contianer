@@ -1,89 +1,62 @@
 <template>
-  <div
-    class="grid col-span-12 md:grid-cols-12 sm:grid-cols-2"
-    style="max-width: 85vw"
-  >
-    <div class="grid grid-cols-12 col-span-12 gap-1">
-      <SelectButton
-        v-if="
-          categorys.length > 0 && requiredFilterFields.includes('categories')
-        "
-        class="col-span-12 mt-4 md:col-span-3"
-        v-model="state.selectedCategory"
-        :options="categorys"
-        optionLabel="name"
-        placeholder="Select a category"
-      />
-      <Button
+  <div class="w-ful mx-auto p-6 bg-white dark:bg-[#1c1c1c] shadow-none rounded-lg ">
+    
+    <!-- Add Container Button -->
+    <div v-if="requiredFilterFields.includes('addContainer')" class="mb-4 flex justify-start">
+      <ActionButton
         label="Add Container"
         icon="pi pi-plus"
-        class="col-span-12 mt-4 md:col-span-2 p-button-success"
-        v-if="requiredFilterFields.includes('addContainer')"
+        class="p-button-success"
         @click="openContainer"
       />
-      <div class="grid grid-cols-6 col-span-12 mt-6 md:col-span-3">
-        <div
-          class="col-span-3"
-          v-if="requiredFilterFields.includes('container')"
-        >
-          <RadioButton
-            v-model="state.searchType"
-            inputId="containerNumber"
-            name="currentSearchType"
-            class="p-component p-inputtext-fluid"
-            value="CONTAINER_NUMBER"
-          />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+      
+      <!-- Radio Button Grid (Always 3 Columns) -->
+      <div class="md:col-span-6 grid grid-cols-3 gap-4">
+        <div v-if="requiredFilterFields.includes('container')" class="flex items-center">
+          <RadioButton v-model="state.searchType" inputId="containerNumber" value="CONTAINER_NUMBER" />
           <label for="containerNumber" class="ml-2">Container #</label>
         </div>
-        <div class="col-span-3" v-if="requiredFilterFields.includes('release')">
-          <RadioButton
-            v-model="state.searchType"
-            inputId="searchType"
-            name="currentSearchType"
-            class="p-component p-inputtext-fluid"
-            value="CONTAINER_RELEASE"
-          />
+        <div v-if="requiredFilterFields.includes('release')" class="flex items-center">
+          <RadioButton v-model="state.searchType" inputId="searchType" value="CONTAINER_RELEASE"/>
           <label for="searchType" class="ml-2">Release</label>
         </div>
-        <div class="col-span-3" v-if="requiredFilterFields.includes('orderId')">
-          <RadioButton
-            v-model="state.searchType"
-            inputId="orderId"
-            name="currentSearchType"
-            class="p-component p-inputtext-fluid"
-            value="ORDER_ID"
-          />
-          <label for="orderId" class="ml-2">Order Id</label>
+        <div v-if="requiredFilterFields.includes('orderId')" class="flex items-center">
+          <RadioButton v-model="state.searchType" inputId="orderId" value="ORDER_ID" />
+          <label for="orderId" class="ml-2">Order ID</label>
         </div>
       </div>
 
-      <InputText
-        style="min-width: 10em"
-        v-model="state.search"
-        v-on:blur="setReleaseNumber"
-        v-if="requiredFilterFields.includes('searchContainer')"
-        class="col-span-6 mt-4 md:col-span-2 p-component p-inputtext-fluid"
-        placeholder="Search containers"
-      />
-      <div class="col-span-6 mt-4 md:col-span-1">
-        <Button
-          class="ml-1"
+      <!-- Search Field & Buttons on the Right -->
+      <div class="md:col-span-6 flex gap-2 items-end justify-end">
+        <InputText
+          v-if="requiredFilterFields.includes('searchContainer')"
+          v-model="state.search"
+          v-on:blur="setReleaseNumber"
+          class="w-full md:w-auto p-component p-inputtext-fluid"
+          placeholder="Search containers"
+        />
+        <ActionButton
           icon="pi pi-search"
-          slot="right-icon"
+          class="p-button-primary p-2"
           :loading="state.quickSearchLoading || state.loading"
           @click="searchInventory()"
         />
-        <Button
-          class="ml-1 p-button-secondary"
+        <ActionButton
           icon="pi pi-refresh"
-          slot="right-icon"
+          class="p-button-secondary p-2"
           :loading="state.loading"
           @click="resetSearch"
         />
       </div>
+
     </div>
   </div>
 </template>
+
+
 <script setup>
   import { reactive, computed, watch, ref } from "vue"
   import InventoryService from "@/service/Inventory"
@@ -94,7 +67,7 @@
   import { useUsers } from "@/store/modules/users"
   import { useInventory } from "@/store/modules/inventory"
   import { isRentalsVisible } from "../../utils/allowedVisibilityForFeatures"
-
+  import ActionButton from "@/components/common/buttons/ActionButton.vue"
   import { useAuth0 } from "@auth0/auth0-vue"
   import cloneDeep from "lodash.clonedeep"
   const emit = defineEmits(["openContainer", "setReleaseNumber"])

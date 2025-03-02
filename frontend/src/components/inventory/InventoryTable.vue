@@ -2,54 +2,59 @@
   <div>
     <ConfirmPopup></ConfirmPopup>
 
-    <div class="mt-4">
-      <Toolbar class="mb-6">
-        <template #start>
-          <InventorySearchMenu
-            @openContainer="openContainer"
-            :resetFunc="reset"
-            :changeCategory="changeCategory"
-            :requiredFilterFields="[
-              'categories',
-              'addContainer',
-              'container',
-              'release',
-              'searchContainer',
-              'orderId'
-            ]"
-          />
-        </template>
+    <div class="mt-4 mb-8">
+      
+      <!-- Inventory Search Menu (Replaced Toolbar) -->
+      <div class="w-full flex flex-col md:flex-row justify-between items-center shadow-md px-2 bg-white dark:bg-[#1c1c1c]">
+        <div class="mb-4">
+        <InventorySearchMenu
+          @openContainer="openContainer"
+          :resetFunc="reset"
+          :changeCategory="changeCategory"
+          :requiredFilterFields="[
+            'categories',
+            'addContainer',
+            'container',
+            'release',
+            'searchContainer',
+            'orderId'
+          ]"
+        />
+      </div>
 
-        <template #end>
-          <ActionButton
-            label="Export"
-            icon="pi pi-upload"
-            class="p-button-help"
-            @click="exportCSV($event)"
-          />
-        </template>
-      </Toolbar>
+      <!-- Export Button -->
+      <div class="mb-4 flex justify-end">
+        <ActionButton
+          label="Export"
+          icon="pi pi-upload"
+          class="p-button-help"
+          @click="exportCSV($event)"
+        />
+      </div>
 
-      <ul
-        class="flex p-0 m-0 overflow-x-scroll list-none select-none bg-0 dark:bg-900"
-        style="max-width: 95vw"
+      </div>
+      <!-- Status Tabs -->
+      <ul class="flex flex-wrap gap-2 p-4 overflow-x-auto bg-white dark:bg-[#1c1c1c] rounded-lg shadow-md">
+      <li 
+        v-for="(status, i) in statusOptions" 
+        :key="i"
+        @click="selectStatus(i)"
+        class="cursor-pointer px-4 py-2 rounded-full transition-all duration-200 ease-in-out shadow-sm border 
+          hover:bg-blue-500 hover:text-white dark:hover:bg-blue-400 dark:hover:text-black 
+          text-sm font-medium flex items-center justify-center"
+        :class="{
+          'bg-blue-500 text-white border-blue-500 shadow-md dark:bg-blue-400 dark:text-black': state.selectedStatusIndex === i,
+          'bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600':
+            state.selectedStatusIndex !== i
+        }"
       >
-        <li v-for="(status, i) in statusOptions" :key="i">
-          <a
-            v-ripple
-            class="flex items-center px-6 py-4 text-2xl transition-colors duration-150 border-b-2 cursor-pointer hover:border-500 dark:hover:border-300 p-ripple"
-            :class="{
-              'border-blue-500 text-blue-500 hover:border-blue-500':
-                state.selectedStatusIndex === i,
-              'text-700 dark:text-100 border-transparent':
-                state.selectedStatusIndex !== i
-            }"
-            @click="selectStatus(i)"
-          >
-            <span class="font-medium">{{ status }}</span>
-          </a>
-        </li>
-      </ul>
+        <span>{{ status }}</span>
+      </li>
+    </ul>
+
+
+
+      <!-- Data Table -->
       <DataTable
         v-if="!state.loading"
         ref="dt"
@@ -60,7 +65,7 @@
         :paginator="true"
         scrollDirection="both"
         @page="onPage"
-        :rows=state.limit
+        :rows="state.limit"
         :filters="state.filters"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         :rowsPerPageOptions="[10, 25, 50]"
@@ -79,6 +84,7 @@
             </div>
           </div>
         </template>
+
         <Column field="detail" header="Container Id" style="width: 160px">
           <template #body="slotProps">
             <ActionButton
@@ -103,28 +109,20 @@
         <Column field="notes" header="Notes" style="width: 160px">
           <template #body="slotProps">
             <ActionButton
-            class="text-no-wrap min-w-24"
+              class="text-no-wrap min-w-24"
               @click="openButton(slotProps.data)"
               :label="slotProps.data.note?.length > 0 ? 'Notes' : 'Add Note'"
             />
           </template>
         </Column>
-        <Column
-          field="appended_order_id"
-          header="Order Id"
-          style="width: 160px"
-        >
+
+        <Column field="appended_order_id" header="Order Id" style="width: 160px">
           <template #body="slotProps">
             <div v-if="slotProps.data.rental_history?.length > 0">
               <Button
                 class="p-button-rounded"
                 v-if="slotProps.data.rental_history?.length === 1"
-                @click="
-                  openOrder(
-                    slotProps.data.rental_history[0]?.line_item.order
-                      ?.display_order_id
-                  )
-                "
+                @click="openOrder(slotProps.data.rental_history[0]?.line_item.order?.display_order_id)"
                 >{{
                   slotProps.data.rental_history[0]?.line_item?.order
                     ?.display_order_id
@@ -138,10 +136,7 @@
             </div>
             <Button
               class="p-button-rounded"
-              v-else-if="
-                slotProps.data.display_order_id &&
-                slotProps.data.display_order_id.length > 0
-              "
+              v-else-if="slotProps.data.display_order_id && slotProps.data.display_order_id.length > 0"
               @click="openOrder(slotProps.data.display_order_id)"
               >{{ slotProps.data.display_order_id }}</Button
             >
@@ -149,14 +144,10 @@
           </template>
         </Column>
 
-        <Column
-          v-for="(col, i) in filteredColumnOrder"
-          :key="col.order_id + col.line_item_id + i.toString()"
-          :field="col.field"
-          :header="col.display"
-          :sortable="col.sortable"
-          :style="col.style"
-        ></Column>
+        <Column v-for="(col, i) in filteredColumnOrder" :key="col.order_id + col.line_item_id + i.toString()"
+          :field="col.field" :header="col.display" :sortable="col.sortable" :style="col.style">
+        </Column>
+
         <Column field="id" header="Delete Container" style="width: 80px">
           <template #body="slotProps">
             <Button
@@ -169,103 +160,12 @@
           </template>
         </Column>
       </DataTable>
+
       <LoadingTable v-if="state.loading" :columns="columnOrder" />
     </div>
-    <Dialog
-      v-model:visible="state.containerDialog"
-      maximizable
-      dismissableMask
-      closeOnEscape
-      :style="{ maxWidth: '1100px' }"
-      :header="
-        state.container.id
-          ? state.container.status == 'Attached'
-            ? 'Edit Container Container Associated ( ' +
-              state.container.order_display_id +
-              ' )'
-            : 'Edit Container'
-          : 'Add Container'
-      "
-      :modal="true"
-      class="p-fluid"
-    >
-      <create-container
-        :disabled="!$ability.can('create', 'inventory-containers')"
-        @hide="state.containerDialog = false"
-        :containerProp="state.container"
-        :status="currentStatus"
-        :resetFunction="reset"
-        :shouldSwap="true"
-      />
-    </Dialog>
-
-    <Dialog
-      v-model:visible="state.containerDetailDialog"
-      maximizable
-      dismissableMask
-      closeOnEscape
-      header="Container Detail"
-      :modal="true"
-      class="p-fluid"
-    >
-      <ContainerHistory
-        :container="state.container"
-        @hide="state.containerDetailDialog = false"
-      />
-    </Dialog>
-
-    <Dialog
-      v-model:visible="state.orderDetailDialog"
-      :style="{ height: '100vh' }"
-      :breakpoints="{
-        '2000px': '45vw',
-        '1400px': '55vw',
-        '1200px': '65vw',
-        '992px': '75vw',
-        '600px': '100vw',
-        '480px': '100vw',
-        '320px': '100vw'
-      }"
-      closeOnEscape
-      :dismissableMask="true"
-      keepInViewPort
-      modal=""
-      :draggable="false"
-    >
-      <template #header>
-        <div class="flex align-items">
-          <div class="flex">
-            <p :class="smAndSmaller ? 'text-xl' : 'text-3xl'">
-              Invoice - {{ state.customerOrder.display_order_id }}
-            </p>
-          </div>
-        </div>
-      </template>
-      <CustomerOrderDetail :customerOrderProp="state.customerOrder" />
-    </Dialog>
-
-    <Dialog
-      v-model:visible="state.noteDialog"
-      dismissableMask
-      closeOnEscape
-      :breakpoints="{
-        '2000px': '45vw',
-        '1400px': '55vw',
-        '1200px': '65vw',
-        '992px': '75vw',
-        '600px': '100vw',
-        '480px': '100vw',
-        '320px': '100vw'
-      }"
-      :modal="true"
-    >
-      <NoteDetail
-        :inventory="state.crtInventory"
-        @noteSubmitted="onNoteSubmitted"
-      />
-    </Dialog>
   </div>
 </template>
+
 
 <script setup>
   import { reactive, computed, watch, onMounted, inject, ref } from "vue"
