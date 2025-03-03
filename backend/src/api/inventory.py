@@ -41,7 +41,7 @@ class PageOut(BaseModel):
     "/inventory_by_status",
     response_model=PageOut,
 )
-# @cache(namespace="inventory", key_builder=default_key_builder, expire=1)
+@cache(namespace="inventory", key_builder=default_key_builder, expire=60*10)
 async def get_inventory_by_status(
     request: Request,
     status: str,

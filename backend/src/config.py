@@ -15,10 +15,10 @@ class Settings(BaseSettings):
     DB_USER: str = config("DB_USER", default="hello_fastapi")
     DB_PASS: str = config("DB_PASS", default="hello_fastapi")
     DB_HOST: str = config("DB_HOST", default="db")
-    DB_PORT: str = config("DB_PORT", default="5432", cast=int)
+    DB_PORT: int = config("DB_PORT", default="5432", cast=int)  # was missing cast to int
     DB_NAME: str = config("DB_NAME", default="containerCrm")
     REDIS_HOST: str = config("REDIS_HOST", default="redis-server")
-    REDIS_PORT: str = config("REDIS_PORT", default="6379", cast=int)
+    REDIS_PORT: int = config("REDIS_PORT", default="6379", cast=int)
     BASE_INVOICE_URL: str = config("BASE_INVOICE_URL", default="")
     STAGE: str = config("STAGE", default="dev")
 

@@ -6,7 +6,7 @@
       
       <!-- Inventory Search Menu (Replaced Toolbar) -->
       <div class="w-full flex flex-col md:flex-row justify-between items-center shadow-md px-2 bg-white dark:bg-[#1c1c1c]">
-        <Toolbarr class="mb-4">
+        <divr class="mb-4">
         <InventorySearchMenu
           @openContainer="openContainer"
           :resetFunc="reset"
@@ -20,7 +20,7 @@
             'orderId'
           ]"
         />
-      </Toolbarr>
+      </divr>
 
       <!-- Export Button -->
       <div class="mb-4 flex justify-end">

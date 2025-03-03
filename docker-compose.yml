@@ -16,12 +16,14 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5002:5000"
+      - "5001:5000"
     expose:
       - "5002"
     environment:
       - DB_HOST=db
+      - DB_PORT=5432
       - REDIS_HOST=redis-server
+      - REDIS_PORT=6379
       - STAGE=dev
     volumes:
       - ./backend:/app  # ✅ Bind mount for local development
@@ -33,13 +35,14 @@ services:
   db:
     image: postgres:alpine
     ports:
-      - "6543:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=hello_fastapi
       - POSTGRES_PASSWORD=hello_fastapi
       - POSTGRES_DB=containerCrm
     volumes:
       - postgres_data:/var/lib/postgresql/data  # ✅ Persistent volume for PostgreSQL
+    
 
 volumes:
   redis_data: 
